@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -17,7 +18,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONObject;
 
@@ -43,6 +47,8 @@ public class Results extends AppCompatActivity {
     private TextView review_count;
     private Button back;
     private Button next;
+    private Button fav;
+    private Button delete;
     private int index = 0;
 
 
@@ -51,6 +57,10 @@ public class Results extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
+
+// Access a Cloud Firestore instance from your Activity
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
 
 
 // giving variable value settings
@@ -62,6 +72,10 @@ public class Results extends AppCompatActivity {
         review_count = findViewById(R.id.review_count);
         back = findViewById(R.id.back);
         next = findViewById(R.id.next);
+        fav = findViewById(R.id.fav);
+        delete = findViewById(R.id.delete);
+
+
 
 
 
@@ -114,11 +128,12 @@ public class Results extends AppCompatActivity {
 
 
 
-        final RequestQueue queue2 = Volley.newRequestQueue(Results.this);
+
         next.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         index += 1;
+                                        final RequestQueue queue2 = Volley.newRequestQueue(Results.this);
                                         final StringRequest stringRequest2 = new StringRequest(Request.Method.GET, "https://api.yelp.com/v3/businesses/search?location=33442",
 
                                                 new Response.Listener<String>() {
@@ -168,11 +183,12 @@ public class Results extends AppCompatActivity {
 
 
 
-        final RequestQueue queue3 = Volley.newRequestQueue(Results.this);
+
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 index -= 1;
+                final RequestQueue queue3 = Volley.newRequestQueue(Results.this);
                 final StringRequest stringRequest3 = new StringRequest(Request.Method.GET, "https://api.yelp.com/v3/businesses/search?location=33442",
 
                         new Response.Listener<String>() {
@@ -216,6 +232,153 @@ public class Results extends AppCompatActivity {
                 };
 
                 queue3.add(stringRequest3);
+            }
+        });
+
+
+
+
+
+        fav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                final RequestQueue queue4 = Volley.newRequestQueue(Results.this);
+                final StringRequest stringRequest4 = new StringRequest(Request.Method.GET, "https://api.yelp.com/v3/businesses/search?location=33442",
+
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                try {
+                                    if (index > 0) {
+                                        back.setVisibility(View.VISIBLE);
+                                    }
+                                    System.out.println(response);
+                                    JSONObject json = new JSONObject(response);
+                                    JSONObject item = json.getJSONArray("businesses").getJSONObject(index);
+                                    Map<String, Object> city = new HashMap<>();
+                                    city.put("Name", item.getString("name"));
+                                    city.put("Price", item.getString("price"));
+                                    city.put("Is It Closed", item.getString("is_closed"));
+                                    city.put("URL", item.getString("url"));
+                                    city.put("Rating", item.getString("rating"));
+                                    city.put("Review Count", item.getString("review_count"));
+
+
+                                    db.collection("cities").document(item.getString("name"))
+                                            .set(city)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.d("1", "DocumentSnapshot successfully written!");
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w("1", "Error writing document", e);
+                                                }
+                                            });
+
+
+                                } catch (Exception e) {
+
+                                }
+                            }
+
+                        }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        System.out.println(error);
+
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Authorization", "bearer " + "KeGY1lNk3nRrSC_z-n3bHDcmpAQTv8mv2X1jS06iU2J0l6GRwfXDP1EgugQGYUEH6GvMCfCbfG2Z7VUQ8nEZz8m8GqtqGwVqSzxqSwBFMcBcE7Rgy-c4abLEbrDSX3Yx");
+                        return params;
+                    }
+
+                };
+
+                queue4.add(stringRequest4);
+
+            }
+        });
+
+
+
+
+
+
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                final RequestQueue queue4 = Volley.newRequestQueue(Results.this);
+                final StringRequest stringRequest4 = new StringRequest(Request.Method.GET, "https://api.yelp.com/v3/businesses/search?location=33442",
+
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                try {
+                                    if (index > 0) {
+                                        back.setVisibility(View.VISIBLE);
+                                    }
+                                    System.out.println(response);
+                                    JSONObject json = new JSONObject(response);
+                                    JSONObject item = json.getJSONArray("businesses").getJSONObject(index);
+                                    Map<String, Object> city = new HashMap<>();
+                                    city.put("Name", item.getString("name"));
+                                    city.put("Price", item.getString("price"));
+                                    city.put("Is It Closed", item.getString("is_closed"));
+                                    city.put("URL", item.getString("url"));
+                                    city.put("Rating", item.getString("rating"));
+                                    city.put("Review Count", item.getString("review_count"));
+
+
+                                    db.collection("cities").document(item.getString("name"))
+                                            .set(city)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.d("1", "DocumentSnapshot successfully written!");
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w("1", "Error writing document", e);
+                                                }
+                                            });
+
+
+                                } catch (Exception e) {
+
+                                }
+                            }
+
+                        }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        System.out.println(error);
+
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Authorization", "bearer " + "KeGY1lNk3nRrSC_z-n3bHDcmpAQTv8mv2X1jS06iU2J0l6GRwfXDP1EgugQGYUEH6GvMCfCbfG2Z7VUQ8nEZz8m8GqtqGwVqSzxqSwBFMcBcE7Rgy-c4abLEbrDSX3Yx");
+                        return params;
+                    }
+
+                };
+
+                queue4.add(stringRequest4);
+
             }
         });
 

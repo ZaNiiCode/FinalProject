@@ -2,21 +2,111 @@ package com.example.finalproject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class Search extends AppCompatActivity {
+
+
+    // initializing all variables
+    private TextView editText;
+    private TextView editTextTextPersonName;
+    private Button search;
+    private Button locate;
+    private EditText busy;
+    private EditText locy;
+    String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final int REQUEST_CODE_PERMISSION = 2;
+
+    // GPSTracker class
+    GPSTracker gps;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        // giving variable value settings
+        editText = findViewById(R.id.busyText);
+        editTextTextPersonName = findViewById(R.id.locyText);
+        search = findViewById(R.id.search);
+        locate = findViewById(R.id.locate);
+        busy = findViewById(R.id.busyText);
+        locy = findViewById(R.id.locyText);
 
+
+        try {
+            if (ActivityCompat.checkSelfPermission(this, mPermission) != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this, new String[]{mPermission},
+                        REQUEST_CODE_PERMISSION);
+
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+
+        locate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                gps = new GPSTracker(Search.this);
+                Intent intent = new Intent(getApplicationContext(), Results.class);
+                if(gps.canGetLocation()){
+                    String actual_lat= "";
+                    String actual_long= "";
+                    double latitude = gps.getLatitude();
+                    double longitude = gps.getLongitude();
+                    actual_lat = String.valueOf(latitude);
+                    actual_long = String.valueOf(longitude);
+
+                    intent.putExtra("lat", actual_lat);
+                    intent.putExtra("long", actual_long);
+                    startActivity(intent);
+
+
+
+                }else{
+                    // can't get location
+                    // GPS or Network is not enabled
+                    // Ask user to enable GPS/network in settings
+                    gps.showSettingsAlert();
+                }
+
+            }
+
+
+        });
+
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), Results.class);
+                String data1 = busy.getText().toString();
+                String data2 = locy.getText().toString();
+                String actualData1 = String.valueOf(data1);
+                String actualData2 = String.valueOf(data2);
+                intent.putExtra("actual_data1", actualData1);
+                intent.putExtra("actual_data2", actualData2);
+                startActivity(intent);
+
+            }
+        });
 
 
 
