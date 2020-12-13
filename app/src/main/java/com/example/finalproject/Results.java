@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +19,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -28,9 +35,11 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Results extends AppCompatActivity {
-
-
+public class Results extends AppCompatActivity implements OnMapReadyCallback {
+public static String latty;
+public static String longi;
+public String dataBusy;
+public String dataLocy;
     // initializing all variables
     private TextView textView;
     private TextView textView3;
@@ -50,13 +59,19 @@ public class Results extends AppCompatActivity {
     private Button fav;
     private Button delete;
     private int index = 0;
-
-
+    private GoogleMap mMap;
+    private String apiLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(Results.this);
+
+
 
 // Access a Cloud Firestore instance from your Activity
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -75,12 +90,40 @@ public class Results extends AppCompatActivity {
         fav = findViewById(R.id.fav);
         delete = findViewById(R.id.delete);
 
+        Intent intent = getIntent();
+        dataBusy = intent.getStringExtra("actual_data1");
+        dataLocy = intent.getStringExtra("actual_data2");
+        String laty = intent.getStringExtra("lat");
+        String longy = intent.getStringExtra("long");
+
+
+
+
+
+
+        if (!TextUtils.isEmpty(dataBusy)) {
+            apiLink = "https://api.yelp.com/v3/businesses/search?term=" + dataBusy + "&location=" + dataLocy + "";
+        }
+
+
+
+        if (TextUtils.isEmpty(dataBusy)) {
+            apiLink = "https://api.yelp.com/v3/businesses/search?location=" + dataLocy + "";
+        }
+
+
+        if (!TextUtils.isEmpty(laty)) {
+            apiLink = "https://api.yelp.com/v3/businesses/search?latitude=" + laty + "&longitude=" + longy + "";
+        }
+
+
+
 
 
 
 
         final RequestQueue queue = Volley.newRequestQueue(Results.this);
-        final StringRequest stringRequest = new StringRequest(Request.Method.GET, "https://api.yelp.com/v3/businesses/search?location=33442",
+        final StringRequest stringRequest = new StringRequest(Request.Method.GET, apiLink,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -94,7 +137,9 @@ public class Results extends AppCompatActivity {
                             url.setText(item.getString("url"));
                             rating.setText(item.getString("rating"));
                             review_count.setText(item.getString("review_count"));
-
+                            latty = String.valueOf(item.getJSONObject("coordinates").getString("latitude"));
+                            longi = String.valueOf(item.getJSONObject("coordinates").getString("longitude"));
+                            onMapReady(mMap);
 
                         }catch(Exception e){
 
@@ -134,7 +179,7 @@ public class Results extends AppCompatActivity {
                                     public void onClick(View view) {
                                         index += 1;
                                         final RequestQueue queue2 = Volley.newRequestQueue(Results.this);
-                                        final StringRequest stringRequest2 = new StringRequest(Request.Method.GET, "https://api.yelp.com/v3/businesses/search?location=33442",
+                                        final StringRequest stringRequest2 = new StringRequest(Request.Method.GET, apiLink,
 
                                                 new Response.Listener<String>() {
                                                     @Override
@@ -152,7 +197,9 @@ public class Results extends AppCompatActivity {
                                                             url.setText(item.getString("url"));
                                                             rating.setText(item.getString("rating"));
                                                             review_count.setText(item.getString("review_count"));
-
+                                                            latty = String.valueOf(item.getJSONObject("coordinates").getString("latitude"));
+                                                            longi = String.valueOf(item.getJSONObject("coordinates").getString("longitude"));
+                                                            onMapReady(mMap);
 
                                                         } catch (Exception e) {
 
@@ -189,7 +236,7 @@ public class Results extends AppCompatActivity {
             public void onClick(View view) {
                 index -= 1;
                 final RequestQueue queue3 = Volley.newRequestQueue(Results.this);
-                final StringRequest stringRequest3 = new StringRequest(Request.Method.GET, "https://api.yelp.com/v3/businesses/search?location=33442",
+                final StringRequest stringRequest3 = new StringRequest(Request.Method.GET, apiLink,
 
                         new Response.Listener<String>() {
                             @Override
@@ -207,7 +254,9 @@ public class Results extends AppCompatActivity {
                                     url.setText(item.getString("url"));
                                     rating.setText(item.getString("rating"));
                                     review_count.setText(item.getString("review_count"));
-
+                                    latty = String.valueOf(item.getJSONObject("coordinates").getString("latitude"));
+                                    longi = String.valueOf(item.getJSONObject("coordinates").getString("longitude"));
+                                    onMapReady(mMap);
 
                                 } catch (Exception e) {
 
@@ -244,7 +293,7 @@ public class Results extends AppCompatActivity {
             public void onClick(View view) {
 
                 final RequestQueue queue4 = Volley.newRequestQueue(Results.this);
-                final StringRequest stringRequest4 = new StringRequest(Request.Method.GET, "https://api.yelp.com/v3/businesses/search?location=33442",
+                final StringRequest stringRequest4 = new StringRequest(Request.Method.GET, apiLink,
 
                         new Response.Listener<String>() {
                             @Override
@@ -265,7 +314,7 @@ public class Results extends AppCompatActivity {
                                     city.put("Review Count", item.getString("review_count"));
 
 
-                                    db.collection("cities").document(item.getString("name"))
+                                    db.collection(MainActivity.accountEmail).document(item.getString("name"))
                                             .set(city)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
@@ -317,8 +366,8 @@ public class Results extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                final RequestQueue queue4 = Volley.newRequestQueue(Results.this);
-                final StringRequest stringRequest4 = new StringRequest(Request.Method.GET, "https://api.yelp.com/v3/businesses/search?location=33442",
+                final RequestQueue queue5 = Volley.newRequestQueue(Results.this);
+                final StringRequest stringRequest5 = new StringRequest(Request.Method.GET, apiLink,
 
                         new Response.Listener<String>() {
                             @Override
@@ -339,18 +388,18 @@ public class Results extends AppCompatActivity {
                                     city.put("Review Count", item.getString("review_count"));
 
 
-                                    db.collection("cities").document(item.getString("name"))
-                                            .set(city)
+                                    db.collection(MainActivity.accountEmail).document(item.getString("name"))
+                                            .delete()
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
-                                                    Log.d("1", "DocumentSnapshot successfully written!");
+                                                    Log.d("1", "DocumentSnapshot successfully deleted!");
                                                 }
                                             })
                                             .addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
-                                                    Log.w("1", "Error writing document", e);
+                                                    Log.w("1", "Error deleting document", e);
                                                 }
                                             });
 
@@ -377,7 +426,7 @@ public class Results extends AppCompatActivity {
 
                 };
 
-                queue4.add(stringRequest4);
+                queue5.add(stringRequest5);
 
             }
         });
@@ -414,5 +463,31 @@ public class Results extends AppCompatActivity {
             }
         });
 
+
+
+
+
+
     }
+
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        double lat_value = 0;
+        double long_value = 0;
+        if(Results.latty != null){
+            lat_value = Double.parseDouble(Results.latty);
+            long_value = Double.parseDouble(Results.longi);
+        }
+       else{
+            lat_value = 0;
+            long_value = 0;
+        }
+        System.out.println(lat_value);
+        LatLng TutorialsPoint = new LatLng(lat_value, long_value);
+        mMap.addMarker(new MarkerOptions().position(TutorialsPoint).title("title"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(TutorialsPoint));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(TutorialsPoint, 14));
+
+    }
+
 }

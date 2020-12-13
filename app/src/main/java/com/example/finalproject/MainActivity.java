@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView Email;
     private TextView NameDisplay;
     private Button sign_out;
+    public static String accountEmail;
+    private BottomNavigationView bottomNavigationView;
 
 
 
@@ -40,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setVisibility(View.INVISIBLE);
 
 
         // giving variable value settings
@@ -80,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 Email.setVisibility(View.INVISIBLE);
                 NameDisplay.setVisibility(View.INVISIBLE);
 
-
+                bottomNavigationView.setVisibility(View.INVISIBLE);
 
 
 
@@ -140,6 +145,8 @@ public class MainActivity extends AppCompatActivity {
     private void handleSignInResult(Task < GoogleSignInAccount > task) {
         try {
             GoogleSignInAccount acc = task.getResult(ApiException.class);
+           accountEmail = acc.getEmail();
+
             accName.setText(acc.getDisplayName());
             accEmail.setText(acc.getEmail());
             google_button.setVisibility(View.INVISIBLE);
@@ -148,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
             NameDisplay.setVisibility(View.VISIBLE);
             accName.setVisibility(View.VISIBLE);
             accEmail.setVisibility(View.VISIBLE);
+            bottomNavigationView.setVisibility(View.VISIBLE);
         } catch (ApiException e) {
 
         }

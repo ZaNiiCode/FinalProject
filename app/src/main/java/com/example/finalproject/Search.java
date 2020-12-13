@@ -8,6 +8,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -96,22 +97,26 @@ public class Search extends AppCompatActivity {
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), Results.class);
-                String data1 = busy.getText().toString();
-                String data2 = locy.getText().toString();
-                String actualData1 = String.valueOf(data1);
-                String actualData2 = String.valueOf(data2);
-                intent.putExtra("actual_data1", actualData1);
-                intent.putExtra("actual_data2", actualData2);
-                startActivity(intent);
+
+
+                if (TextUtils.isEmpty(locy.getText())) {
+                    locy.setHint("Enter Location");
+
+
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), Results.class);
+                    String data1 = busy.getText().toString();
+                    String data2 = locy.getText().toString();
+                    String actualData1 = String.valueOf(data1);
+                    String actualData2 = String.valueOf(data2);
+                    intent.putExtra("actual_data1", actualData1);
+                    intent.putExtra("actual_data2", actualData2);
+                    startActivity(intent);
+                }
+
 
             }
         });
-
-
-
-
-
 
 
 
