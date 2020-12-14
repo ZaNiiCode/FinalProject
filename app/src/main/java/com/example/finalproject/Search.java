@@ -62,7 +62,7 @@ public class Search extends AppCompatActivity {
 
 
 
-
+//locate button, upon user click the gps will display relevant businesses around users actual location area
         locate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,6 +94,7 @@ public class Search extends AppCompatActivity {
 
         });
 
+        //search button
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,7 +103,7 @@ public class Search extends AppCompatActivity {
                 if (TextUtils.isEmpty(locy.getText())) {
                     locy.setHint("Enter Location");
 
-
+//sends search request with gps data to locate searched for business around user specified area
                 } else {
                     Intent intent = new Intent(getApplicationContext(), Results.class);
                     String data1 = busy.getText().toString();
@@ -140,7 +141,7 @@ public class Search extends AppCompatActivity {
 
 
 
-
+//bottom nav menu
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

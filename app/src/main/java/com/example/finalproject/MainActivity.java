@@ -56,12 +56,12 @@ public class MainActivity extends AppCompatActivity {
         NameDisplay = findViewById(R.id.NameDisplay);
 
 
-
+//until user logs in, their information is not displayed
         Email.setVisibility(View.INVISIBLE);
         NameDisplay.setVisibility(View.INVISIBLE);
         sign_out.setVisibility(View.INVISIBLE);
 
-
+// google sign in button
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
         mGOogleSignInClient = GoogleSignIn.getClient(this, gso);
 
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
+ //setting visibilities to invisible until user logs in
         sign_out.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
+//bottom nav menu
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
+//google retrieving correct user upon login
     private void signIn() {
         Intent signInIntent = mGOogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
+    //when user logs in through google sign in, app will now be visible
     private void handleSignInResult(Task < GoogleSignInAccount > task) {
         try {
             GoogleSignInAccount acc = task.getResult(ApiException.class);

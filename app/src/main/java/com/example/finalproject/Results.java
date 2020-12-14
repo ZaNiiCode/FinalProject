@@ -40,6 +40,7 @@ public static String latty;
 public static String longi;
 public String dataBusy;
 public String dataLocy;
+
     // initializing all variables
     private TextView textView;
     private TextView textView3;
@@ -100,7 +101,7 @@ public String dataLocy;
 
 
 
-
+//setting which url belongs to which api request
         if (!TextUtils.isEmpty(dataBusy)) {
             apiLink = "https://api.yelp.com/v3/businesses/search?term=" + dataBusy + "&location=" + dataLocy + "";
         }
@@ -121,12 +122,13 @@ public String dataLocy;
 
 
 
-
+//initial queue upon user clicking results page
         final RequestQueue queue = Volley.newRequestQueue(Results.this);
         final StringRequest stringRequest = new StringRequest(Request.Method.GET, apiLink,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        //information displayed from api to this page
                         try {
                             System.out.println(response);
                             JSONObject json = new JSONObject(response);
@@ -173,7 +175,7 @@ public String dataLocy;
 
 
 
-
+//adding +1 to the index which displays the information of the next business in the array
         next.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -230,7 +232,7 @@ public String dataLocy;
 
 
 
-
+//back button does -1 to the index which displays the information of the previous business in the array
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -287,14 +289,14 @@ public String dataLocy;
 
 
 
-
+//favorites button
         fav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 final RequestQueue queue4 = Volley.newRequestQueue(Results.this);
                 final StringRequest stringRequest4 = new StringRequest(Request.Method.GET, apiLink,
-
+//all saved elements listed here into the collection
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
@@ -313,7 +315,7 @@ public String dataLocy;
                                     city.put("Rating", item.getString("rating"));
                                     city.put("Review Count", item.getString("review_count"));
 
-
+//adds each business as a document to the respective users sign in which is the collection
                                     db.collection(MainActivity.accountEmail).document(item.getString("name"))
                                             .set(city)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -361,7 +363,7 @@ public String dataLocy;
 
 
 
-
+//delete button
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -387,7 +389,7 @@ public String dataLocy;
                                     city.put("Rating", item.getString("rating"));
                                     city.put("Review Count", item.getString("review_count"));
 
-
+//adds each business as a document to the respective users sign in which is the collection
                                     db.collection(MainActivity.accountEmail).document(item.getString("name"))
                                             .delete()
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -436,7 +438,7 @@ public String dataLocy;
 
 
 
-
+//bottom nav menu
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -469,7 +471,7 @@ public String dataLocy;
 
 
     }
-
+//enables map fragment to work with lat and long to display the pinpointed location
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         double lat_value = 0;

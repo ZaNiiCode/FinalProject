@@ -4,7 +4,8 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.example.finalproject.MainActivity">
+        tools:context="com.example.finalproject.MainActivity"
+        android:background="@drawable/background">
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/google_button"
@@ -13,7 +14,7 @@
 
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
-        android:layout_marginTop="335dp" />
+        android:layout_marginTop="56dp" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
@@ -36,17 +37,25 @@
         android:layout_height="50dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="27dp"
-        android:layout_marginEnd="36dp" />
+        android:layout_marginTop="176dp"
+        android:layout_marginEnd="169dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@android:color/black"
+        android:textColorLink="@android:color/black"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/accEmail"
-        android:layout_width="109dp"
-        android:layout_height="50dp"
+        android:layout_width="268dp"
+        android:layout_height="56dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="88dp"
-        android:layout_marginEnd="35dp" />
+        android:layout_marginTop="232dp"
+        android:layout_marginEnd="-1dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@android:color/black"
+        android:textColorLink="@android:color/black"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/sign_out"
@@ -54,8 +63,8 @@
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/google_button"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="17dp"
-        android:layout_marginBottom="265dp"
+        android:layout_marginEnd="-124dp"
+        android:layout_marginBottom="567dp"
         android:text="Sign Out" />
 
     <TextView
@@ -64,9 +73,13 @@
         android:layout_height="50dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="81dp"
-        android:text="Email:" />
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="233dp"
+        android:text="Email:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@android:color/black"
+        android:textColorLink="@android:color/black"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/NameDisplay"
@@ -74,9 +87,13 @@
         android:layout_height="49dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="19dp"
-        android:text="Name:" />
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="177dp"
+        android:text="Name:"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@android:color/black"
+        android:textColorLink="@android:color/black"
+        android:textStyle="bold" />
 
 
 </RelativeLayout>

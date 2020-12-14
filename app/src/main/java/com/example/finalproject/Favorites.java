@@ -38,7 +38,7 @@ public class Favorites extends AppCompatActivity {
 
 
 
-
+//function that allows for this page to display the favorites in the logged in users collection, accessed from the fire store database
         db.collection(MainActivity.accountEmail)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -64,7 +64,7 @@ public class Favorites extends AppCompatActivity {
 
 
 
-
+//bottom nav menu
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
